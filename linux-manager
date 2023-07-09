@@ -318,7 +318,6 @@ function antivirusManager() {
 
       cd $DIRPATH && clamscan -ri .
 
-
       # Confirm Exit
       confirmFunc antivirusManager
       ;;
@@ -686,7 +685,7 @@ function fedoraManager() {
 function linuxMintManager() {
   clear;
   printf "
-  // ===== Main Menu ===== //
+  // ===== Linux Mint Manager ===== //
   0) Go Back
   1) Remove Bloatwares
   "
