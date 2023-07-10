@@ -38,7 +38,7 @@ A Guide on setting up Linux mint after installation. Most of the instructions be
 3. Keyboard > Shortcuts > Workspaces: Switch to left workspace 'Super+Ctrl+left', Switch to right workspace 'Super+Ctrl+right'
 4. Keyboard > Shortcuts > System > Lock screen 'Super+l'
 5. Keyboard > Shortcuts > Launchers: Launch terminal 'Super+Enter'
-6. Keyboard > Shortcuts > Add Custom Shortcuts: Name='XKill' Command='xkill' KeyBindings='Super + ESC', Name='ULauncher' Command='/usr/bin/ulauncher-toggle' KeyBindings='Super+p'
+6. Keyboard > Shortcuts > Add Custom Shortcuts: Name='XKill' Command='xkill' KeyBindings='Super + ESC'
 
 ## Text Editor
 
