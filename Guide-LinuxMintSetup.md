@@ -34,11 +34,10 @@ A Guide on setting up Linux mint after installation. Most of the instructions be
 ## Shortcuts
 
 1. Keyboard > Shortcuts > Windows: Close window 'Super+q', Toggle Maximize window 'Super+Ctrl+Up', Minimize window 'Super+Ctrl+Down'
-2. Keyboard > Shortcuts > Windows > Inter-workspace: Move window to left workspace 'Super+Shift+left', Move window to right workspace 'Super+Shift+right'
-3. Keyboard > Shortcuts > Workspaces: Switch to left workspace 'Super+Ctrl+left', Switch to right workspace 'Super+Ctrl+right'
-4. Keyboard > Shortcuts > System > Lock screen 'Super+l'
-5. Keyboard > Shortcuts > Launchers: Launch terminal 'Super+Enter'
-6. Keyboard > Shortcuts > Add Custom Shortcuts: Name='XKill' Command='xkill' KeyBindings='Super + ESC'
+2. Keyboard > Shortcuts > Workspaces: Switch to left workspace 'Super+Ctrl+left', Switch to right workspace 'Super+Ctrl+right'
+3. Keyboard > Shortcuts > System > Lock screen 'Super+l'
+4. Keyboard > Shortcuts > Launchers: Launch terminal 'Super+Enter'
+5. Keyboard > Shortcuts > Add Custom Shortcuts: Name='XKill' Command='xkill' KeyBindings='Super + ESC'
 
 ## Text Editor
 
