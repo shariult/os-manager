@@ -112,6 +112,14 @@ Get-AppxPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Re
 
 # Allow Local and Remote Signed Scripts
 Set-ExecutionPolicy RemoteSigned -Forced
+
+# Change a directory in the Windows file system so that it is case-sensitive (FOO !== foo)
+fsutil.exe file setCaseSensitiveInfo <path> enable
+```
+
+```cmd
+# Make Junctions
+mklink /J "<link-path>" "<target-path>"
 ```
 
 ## Block in Firewall
