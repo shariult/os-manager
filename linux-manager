@@ -512,7 +512,7 @@ function appInstaller() {
         find . -iname "xampp*.desktop" -type f -exec cp "{}" $HOME/.local/share/applications/xampp.desktop ";" && chmod +x $HOME/.local/share/applications/xampp.desktop
 
         # Keeping default htdocs folder location
-        HTDOCSDIR="/home/$USER/Desktop/php-web"
+        HTDOCSDIR="/home/$USER/workshop/php-web"
         mkdir -p $HTDOCSDIR
 
         # Setting htdocs folder location
