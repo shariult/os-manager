@@ -579,33 +579,33 @@ EOF
         echo "Please install flatpak first!";
       fi
 
-      flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      # flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
       printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, okular, telegram, tubeconverter\n"
       read -p "Enter Package Name: " PACKAGE_NAME
 
       if [ $PACKAGE_NAME == "bottles" ]; then
-        flatpak install --user flathub -y com.usebottles.bottles
+        flatpak install flathub -y com.usebottles.bottles
       elif [ $PACKAGE_NAME == "chromium" ]; then
-        flatpak install --user flathub -y com.github.Eloston.UngoogledChromium
+        flatpak install flathub -y com.github.Eloston.UngoogledChromium
       elif [ $PACKAGE_NAME == "discord" ]; then
-        flatpak install --user flathub -y com.discordapp.Discord
+        flatpak install flathub -y com.discordapp.Discord
       elif [ $PACKAGE_NAME == "gimp" ]; then
-        flatpak install --user flathub -y org.gimp.GIMP
+        flatpak install flathub -y org.gimp.GIMP
       elif [ $PACKAGE_NAME == "handbrake" ]; then
-        flatpak install --user flathub -y fr.handbrake.ghb
+        flatpak install flathub -y fr.handbrake.ghb
       elif [ $PACKAGE_NAME == "inkscape" ]; then
-        flatpak install --user flathub -y org.inkscape.Inkscape
+        flatpak install flathub -y org.inkscape.Inkscape
       elif [ $PACKAGE_NAME == "librewolf" ]; then
-        flatpak install --user flathub -y io.gitlab.librewolf-community
+        flatpak install flathub -y io.gitlab.librewolf-community
       elif [ $PACKAGE_NAME == "okular" ]; then
-        flatpak install --user flathub -y org.kde.okular
+        flatpak install flathub -y org.kde.okular
       elif [ $PACKAGE_NAME == "telegram" ]; then
-        flatpak install --user flathub -y org.telegram.desktop
+        flatpak install flathub -y org.telegram.desktop
       elif [ $PACKAGE_NAME == "tubeconverter" ]; then
-        flatpak install --user flathub -y org.nickvision.tubeconverter
+        flatpak install flathub -y org.nickvision.tubeconverter
       else
-        flatpak install --user flathub $PACKAGE_NAME
+        flatpak install flathub $PACKAGE_NAME
       fi
       
       # Confirm Exit
@@ -667,7 +667,7 @@ function fedoraManager() {
     3)
       sudo dnf remove -y ffmpeg-free gnome-boxes gnome-contacts gnome-maps gnome-photos gnome-tour gnome-weather libswscale-free libswresample-free rhythmbox totem
       sudo dnf install -y rpmfusion-free-release-tainted
-      sudo dnf install -y ffmpeg ffmpeg-devel gnome-tweaks gnome-extensions-app libdvdcss && flatpak install --user flathub com.mattjakeman.ExtensionManager
+      sudo dnf install -y ffmpeg ffmpeg-devel gnome-tweaks gnome-extensions-app libdvdcss && flatpak install flathub com.mattjakeman.ExtensionManager
 
       # Confirm Exit
       confirmFunc fedoraManager
