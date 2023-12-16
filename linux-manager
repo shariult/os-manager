@@ -394,9 +394,10 @@ function appInstaller() {
   6) Files - 'Anaconda3*.sh'
   7) Files - 'xampp*.run' and 'composer.phar'
   8) Online - Node.JS
-  9) Online - MongoDB
-  10) Online - Brave Browser
-  11) Flathub - Applications
+  9) Online - Node Version Manager
+  10) Online - MongoDB
+  11) Online - Brave Browser
+  12) Flathub - Applications
   "
   read -p "Select Option: " APPINSTALLERCHOICE
    
@@ -531,7 +532,8 @@ function appInstaller() {
     8)
       echo "// ===== Install Node.js ===== //"
       if command -v apt &> /dev/null; then
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs && npm config set prefix $HOME/.config/npm-packages && echo "export PATH=\$PATH:$HOME/.config/npm-packages/bin" >> ~/.profile && source ~/.profile
+        sudo apt-get install -y ca-certificates curl gnupg && sudo mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+        NODE_MAJOR=20; echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list && sudo apt-get update && sudo apt-get install -y nodejs && npm config set prefix $HOME/.config/npm-packages && echo "export PATH=\$PATH:$HOME/.config/npm-packages/bin" >> ~/.profile && source ~/.profile
       elif command -v dnf &> /dev/null; then
         sudo dnf install -y nodejs && npm config set prefix $HOME/.config/npm-packages && echo "export PATH=\$PATH:$HOME/.config/npm-packages/bin" >> ~/.profile && source ~/.profile
       else
@@ -542,9 +544,16 @@ function appInstaller() {
       confirmFunc appInstaller
       ;;
     9)
+      echo "// ===== Install Node Version Manager ===== //"
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    10)
       echo "// ===== Install MongoDB ===== //"
       if command -v apt &> /dev/null; then
-        sudo curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-org-6.0.gpg && echo "deb [signed-by=/usr/share/keyrings/mongodb-org-6.0.gpg arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
+        # sudo curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | sudo gpg --dearmor -o /usr/share/keyrings/mongodb-org-6.0.gpg && echo "deb [signed-by=/usr/share/keyrings/mongodb-org-6.0.gpg arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
+        sudo apt-get install gnupg curl && curl -fsSL https://pgp.mongodb.com/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor && echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
       elif command -v dnf &> /dev/null; then
         sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo<<EOF
 [mongodb-org-6.0]
@@ -562,7 +571,7 @@ EOF
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    10)
+    11)
       echo "// ===== Install Brave Browser ===== //"
       if command -v apt &> /dev/null; then
         sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && sudo apt update && sudo apt install brave-browser
@@ -573,7 +582,7 @@ EOF
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    11)
+    12)
       # Checking for Flatpak
       if ! command -v flatpak &> /dev/null; then
         echo "Please install flatpak first!";
