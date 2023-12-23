@@ -14,21 +14,20 @@ A Guide on setting up Windows after installation.
 8. Install Drivers
 9. Unpin applications + Defragment settings + [O&O shutup 10](https://www.oo-software.com/en/shutup10) + Restart
 10. Winodows Update + Restart
-16. Activate .Net 3.5 + Windows Update Recheck
-11. Device encryption > Turn off + Settings (Minimal)
+11. Activate .Net 3.5 + Windows Update Recheck
+12. Device encryption > Turn off + Settings (Minimal)
 13. Fix taskbar + Task manager settings
-20. Create New User Account + Change to New Account
-24. User folder locations (Optional) + Transfer User files + AppData (Install fonts, Run 'fix_context_menu.reg' etc.)
-11. Fix taskbar + Task manager settings + Settings
-14. Powertoys
-15. Store update
-27. [O&O shutup 10](https://www.oo-software.com/en/shutup10) as User + Restart
-29. Block in firewall + Install Adobe + Clean 'temp' files + Photoshop fixes
-30. Office 365 + Remove Bloatwares (Onedrive, Microsoft Teams)
-31. Task manager (both as User and Adminstrator) > Startup + Restart
-17. Ninite apps + Other Apps
-33. App Settings (KeepassXC > Browsers > Rest) + Restart
-
+14. Create New User Account + Change to New Account
+15. User folder locations (Optional) + Transfer User files + AppData (Install fonts, Run 'fix_context_menu.reg' etc.)
+16. Fix taskbar + Task manager settings + Settings
+17. Powertoys
+18. Store update
+19. [O&O shutup 10](https://www.oo-software.com/en/shutup10) as User + Restart
+20. Block in firewall + Install Adobe + Clean 'temp' files + Photoshop fixes
+21. Office 365 + Remove Bloatwares (Onedrive, Microsoft Teams)
+22. Task manager (both as User and Adminstrator) > Startup + Restart
+23. Ninite apps + Other Apps
+24. App Settings (KeepassXC > Browsers > Rest) + Restart
 
 ## Windows Settings
 
@@ -120,6 +119,9 @@ fsutil.exe file setCaseSensitiveInfo <path> enable
 ```cmd
 # Make Junctions
 mklink /J "<link-path>" "<target-path>"
+
+## Bypass OOBE - shift+F10 to bring Command prompt
+oobe/BypassNRO
 ```
 
 ## Block in Firewall
@@ -136,6 +138,17 @@ New-NetFirewallRule -DisplayName "NetBlocker-Photoshop" -Direction Outbound -Pro
 New-NetFirewallRule -DisplayName "NetBlocker-AdobeCC_node64" -Direction Outbound -Program "C:\Program Files\Common Files\Adobe\Creative Cloud Libraries\libs\node.exe" -Action Block
 New-NetFirewallRule -DisplayName "NetBlocker-AdobeCC_node" -Direction Outbound -Program "C:\Program Files (x86)\Adobe\Adobe Creative Cloud Experience\libs\node.exe" -Action Block
 New-NetFirewallRule -DisplayName "NetBlocker-Lunacy" -Direction Outbound -Program "C:\Program Files\Lunacy\Lunacy.exe" -Action Block
+```
+
+## WSL Commands
+
+```powershell
+wsl -l -v
+wsl -d Debian
+wsl --install -d Debian
+wsl --export Debian <Path>.tar
+wsl --import Debian <installation_path> <tar_file_path>
+wsl --unregister Debian
 ```
 
 ## Miscellaneous

@@ -33,11 +33,12 @@ A Guide on setting up Linux mint after installation. Most of the instructions be
 
 ## Shortcuts
 
-1. Keyboard > Shortcuts > Windows: Close window 'Super+q', Toggle Maximize window 'Super+Ctrl+Up', Minimize window 'Super+Ctrl+Down'
-2. Keyboard > Shortcuts > Workspaces: Switch to left workspace 'Super+Ctrl+left', Switch to right workspace 'Super+Ctrl+right'
-3. Keyboard > Shortcuts > System > Lock screen 'Super+l'
-4. Keyboard > Shortcuts > Launchers: Launch terminal 'Super+Enter'
-5. Keyboard > Shortcuts > Add Custom Shortcuts: Name='XKill' Command='xkill' KeyBindings='Super + ESC'
+1. Keyboard > Shortcuts > General: Show the workspace selection screen 'Super+Tab'.
+2. Keyboard > Shortcuts > Windows: Close window 'Super+q', Inter-workspace > Move window to left workspace 'Super+Alt+left', Inter-workspace > Move window to right workspace 'Super+Alt+right'
+3. Keyboard > Shortcuts > Workspaces: Switch to left workspace 'Super+Ctrl+left', Switch to right workspace 'Super+Ctrl+right'.
+4. Keyboard > Shortcuts > System: Lock screen 'Super+l'.
+5. Keyboard > Shortcuts > Launchers: Launch terminal 'Super+Enter'.
+6. Keyboard > Shortcuts > Add Custom Shortcuts: Name='XKill' Command='xkill' KeyBindings='Super + ESC'.
 
 ## Text Editor
 
@@ -115,4 +116,20 @@ Steam Proton GE location: `~/.steam/root/compatibilitytools.d/`. Use following t
 WINE_FULLSCREEN_FSR=1 WINE_FULLSCREEN_FSR_STRENGTH=4 %command%
 # Use Nvidia Image Sharpening
 PROTON_HIDE_NVIDIA_GPU=0 PROTON_ENABLE_NVAPI=1
+```
+
+## Useful Commands
+
+```bash
+# Show GPU Options
+sudo nano /usr/share/X11/xorg.conf.d/10-nvidia.conf
+# Add text before end section: Option "CoolBits" "12"
+
+# 7zip
+7zip-linux a ./JLib.7z ./JLib/* -p"Password" -v20g -mhe
+# -mhe -> Encrypts filename
+# -v20g -> Split volume into 20GB per pieces
+
+# Run with Nvidia GPU
+__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia
 ```
