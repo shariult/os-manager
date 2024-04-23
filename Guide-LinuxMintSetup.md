@@ -92,15 +92,42 @@ volume = zero
 
 ## Secure Boot - Sign VMware and VirtualBox
 
+### Sign VMware
+
 ```bash
 openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=VMware/"
+
 # Signing VMware
 sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n vmmon)
 sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n vmnet)
-# Signing VirtualBox
-sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n vboxdrv)
+
 # Importing MOK key
 mokutil --import MOK.der
+```
+
+### Sign VirtualBox
+
+```bash
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=VirtualBox/"
+
+# Signing VirtualBox
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n vboxdrv)
+
+# Importing MOK key
+mokutil --import MOK.der
+```
+
+### After Kernal Update
+
+```bash
+sudo vmware-modconfig --console --install-all
+
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n vmmon)
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n vmnet)
+
+sudo modprobe -v vmnet
+sudo modprobe -v vmmon
+sudo vmware-networks --start
 ```
 
 ## Game Launch Options
@@ -115,7 +142,7 @@ Steam Proton GE location: `~/.steam/root/compatibilitytools.d/`. Use following t
 # Use FSR
 WINE_FULLSCREEN_FSR=1 WINE_FULLSCREEN_FSR_STRENGTH=4 %command%
 # Use Nvidia Image Sharpening
-PROTON_HIDE_NVIDIA_GPU=0 PROTON_ENABLE_NVAPI=1
+PROTON_HIDE_NVIDIA_GPU=0 PROTON_ENABLE_NVAPI=1 %command%`
 ```
 
 ## Useful Commands
