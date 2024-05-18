@@ -124,6 +124,15 @@ mklink /J "<link-path>" "<target-path>"
 oobe/BypassNRO
 ```
 
+### Search Queries for Windows
+
+```
+kind:=picture
+kind:=video framewidth:1920 frameheight:1080
+kind:=video framewidth:1280 frameheight:720
+```
+
+
 ## Block in Firewall
 
 ```powershell
@@ -157,21 +166,6 @@ wsl --unregister Debian
 
 **Windows God Mode:** Create a folder named `God Mode.{ED7BA470-8E54-465E-825C-99712043E01C}`
 
-## Common
-
-**Browser Extensions:** Decentraleyes, fireshot, focus to-do, font fingerprint defender, jsonview, kontrast, news feed eradicator, privacy badger, react developer tools, redux, responsive viewer, return youtube dislike, singlefile, site palette, ublock origin, visbug, web developer, whatfont
-
-**Sublime Extensions:** AdvancedNewfile, A file icon, Babel, BracketHighlighter, ColorPicker, Color Highlight, Ejs2, Emmet, EsLint, Material Theme, Monokai pro, Sass, SidebarEnhancements, SublimeCodeIntel
-
-**VSCode Extensions:** Bracket Pair Colorizer, Color Highlight, Community Material Theme, Debugger for Firefox, DotEnv, ESLint, ES7/React Snippets, Image Preview, Material Icon Theme, PHP Extension Pack, Prettier, Pug Beautify, MySQL-cweijan(Optional), Python (Optional), Thunder client(Optional)
-
-**NPM/Composer Global Packages:**
-
-```bash
-npm install -g asar create-react-app create-next-app express-generator eslint live-server http-server nodemon prettier sass sass-migrator typescript uglify-js yarn
-composer global require laravel/installer friendsofphp/php-cs-fixer
-```
-
 ## Dual Booting Bootloader fixes
 
 If Windows is installed after Ubuntu then use this method to fix bootloader by changing from Windows bootloader to Grub. Run cmd as adminstrator in Windows,
@@ -185,3 +179,4 @@ In Linux,
 ```bash
 sudo update-grub
 ```
+
