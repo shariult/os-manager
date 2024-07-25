@@ -1,0 +1,635 @@
+#! /usr/bin/bash
+
+# Creating Necessary Directories
+mkdir -p $HOME/.fonts $HOME/.vpn-configs $HOME/.config/npm-packages $HOME/.local/bin $HOME/.local/share/applications $HOME/.local/share/icons/hicolor/scalable/apps
+
+# Utility Functions
+function confirmFunc() {
+  if [ "$2" == "auto" ]; then
+    "$@"
+  else
+    read -p "Run Again? (y/n): " CHOICEINPUT
+    if [[ $CHOICEINPUT =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      "$@"
+    else 
+      echo "Thank You!"
+    fi
+  fi
+}
+
+function getDir() {
+  printf "You are currently in $(pwd)\n"
+  read -p "Enter Folder Path: " INPUTPATH
+  DIRPATH=$(realpath ${INPUTPATH/#~/$HOME})
+}
+
+function vlcAutoplayer() {
+mkdir -p $HOME/.config/vlc
+cat << EOF > $HOME/.config/vlc/vlc.sh
+#!/bin/bash
+shopt -s extglob
+
+# list of extensions for searching in current directory
+extensions_video='avi|mp4|mkv|m4v|mov|mpg|mpeg|wmv|3gp'
+extensions_audio='ogg|opus|flac|m4a|mp3|wav'
+extensions="@(\${extensions_video}|\${extensions_audio})"
+
+# kill other instances of vlc
+killall vlc; sleep 0.1
+
+# launch empty vlc if no argument provided
+if [ -z "\$1" ]; then
+  vlc; exit
+fi
+
+# parse argument
+filename=\$(realpath -- "\$1")
+dirname=\$(dirname "\$filename")
+basename=\$(basename "\$filename")
+
+# list files with matching extension
+OLDIFS="\$IFS"
+IFS='' list=\$(ls "\${dirname}"/*.\${extensions} -1 2>/dev/null)
+IFS="\$OLDIFS"
+
+# Fixing Numerical Sort
+echo "\$list" > /tmp/vlc.m3u
+list=\`sort -V /tmp/vlc.m3u\`
+
+# get position of filename in current directory
+pos=\$(echo "\$list" | grep -n -F -- "\${basename}" | cut -d: -f1)
+
+# if the filename does not have one of the extension above, launch vlc with provided filename
+if [ -z "\$pos" ]; then
+  vlc -- "\${filename}"
+  exit
+fi
+
+# change positions in playlist such as the first element is the opened file
+n=\$(echo "\$list" | wc -l)
+echo "\$list" | tail -n\$((\$n-\$pos+1)) >  /tmp/vlc.m3u
+echo "\$list" | head -n\$((\$pos-1))    >> /tmp/vlc.m3u
+
+# launch playlist
+IFS=\$'\n'; read -d '' -r -a files < /tmp/vlc.m3u; vlc "\${files[@]}"
+EOF
+}
+
+function appimageInstaller() {
+  # FILENAME with path, without extension
+  FILE="${1%.*}"
+  
+  # FILENAME without path, without extension
+  FILENAME="${FILE##*/}"
+  
+  # Copying The FILE
+  cp "$FILE.AppImage" $HOME/.local/bin/"$FILENAME.AppImage"
+  
+  # Copying icons (if exists)
+  if [ -f "$FILE.svg" ]; then
+    APPIMAGEICON="$FILENAME.svg"
+    cp "$FILE.svg" $HOME/.local/share/icons/hicolor/scalable/apps/"$APPIMAGEICON"
+  elif [ -f "$FILE.jpg" ]; then
+    APPIMAGEICON="$FILENAME.jpg"
+    cp "$FILE.jpg" $HOME/.local/share/icons/hicolor/scalable/apps/"$APPIMAGEICON"
+  elif [ -f "$FILE.png" ]; then
+    APPIMAGEICON="$FILENAME.png"
+    cp "$FILE.png" $HOME/.local/share/icons/hicolor/scalable/apps/"$APPIMAGEICON"
+  else
+    APPIMAGEICON="$FILENAME.png"
+  fi
+  
+  # Copyting .desktop (if exists)
+  if [ -f "$FILE.desktop" ]; then
+    cp "$FILE.desktop" $HOME/.local/share/applications/"$FILENAME.desktop"
+  else 
+    cat << EOF > $HOME/.local/share/applications/$FILENAME.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=$FILENAME
+GenericName=$FILENAME
+StartupWMClass=$FILENAME
+Exec="$FILENAME" %f
+Terminal=false
+Icon=$APPIMAGEICON
+Type=Application
+TryExec="$FILENAME.AppImage"
+StartupNotify=true
+EOF
+  fi
+  
+  # Add Execute permissions
+  chmod +x $HOME/.local/bin/"$FILENAME.AppImage" && [ -f "$HOME/.local/share/applications/$FILENAME.desktop" ] && chmod +x "$HOME/.local/share/applications/$FILENAME.desktop" && echo "$FILENAME installed"
+}
+
+function composerInstaller() {
+  # Adding php, mysql to path
+  echo "export PATH=\$PATH:/opt/lampp/bin" >> ~/.profile && source ~/.profile
+  
+  # Creating symbolic link for php and mysql
+  sudo ln -s /opt/lampp/bin/php /usr/local/bin/php && sudo ln -s /opt/lampp/bin/mysql /usr/local/bin/mysql
+  
+  # Installing composer
+  find . -iname "composer*.phar" -type f -exec sudo cp "{}" /usr/local/bin/composer ";" && sudo chmod +x /usr/local/bin/composer && sudo chmod 777 /usr/local/bin/composer
+  
+  # Adding composer directory to path
+  echo "export PATH=\$PATH:$HOME/.config/composer/vendor/bin" >> ~/.profile && source ~/.profile
+}
+
+function defragment() {
+  DEFAULTPARTITION="/dev/sdb1"
+  
+  read -p "Check fragmentation or Defragment (c/d): " DEFRAGCHOICE
+  read -p "Partition Path (default: /dev/sdb1): " PARTITION
+  
+  PARTITION="${PARTITION:-$DEFAULTPARTITION}"
+  case "$DEFRAGCHOICE" in 
+  [cC] | [cC][hH][eE][cC][kK])
+    sudo e4defrag -c "$PARTITION"
+    ;;
+  [dD] | [dD][eE][fF][rR][aA][gG])
+    sudo e4defrag "$PARTITION"
+    ;;
+  *)
+    echo "Invalid choice! Please enter c/check or d/defrag"
+    ;;
+  esac
+}
+
+# Sub Menu
+
+function extraConfig() {
+  clear;
+  printf "
+  // ===== Extra Config ===== //
+  0) Go Back
+  1) Reduce vm.swappiness
+  2) VLC - Create Playlist from file
+  3) Get global NodeJS and Composer packages
+  4) Fix System Monitor
+  5) Reduce SSD Write
+  6) Set Time and Date to rtc
+  7) Reinstall MSfonts
+  8) Remove Execute Permission from files
+  9) Add Anaconda to environment path
+  10) Restart or Stop Mongodb
+  11) Install Tlp for Laptops
+  "
+  read -p "Select Option: " EXTRACONFIGCHOICE
+  
+  case "$EXTRACONFIGCHOICE" in
+    0)
+      confirmFunc mainMenu "auto"
+      ;;
+    1)
+      echo "vm.swappiness = 10" | sudo tee -a /etc/sysctl.conf && printf "\n ***** vm.swappiness Reduced ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    2)
+      # Checking for VLC
+      if ! command -v vlc &> /dev/null; then
+        echo "Install VLC Media player first"
+        return
+      fi
+
+      # codes
+      vlcAutoplayer
+      chmod +x ~/.config/vlc/vlc.sh && sudo sed -i "s|Exec=/usr/bin/vlc --started-from-file %U|Exec=$HOME/.config/vlc/vlc.sh|g;s|TryExec=/usr/bin/vlc|TryExec=$HOME/.config/vlc/vlc.sh|g" /usr/share/applications/vlc.desktop && printf "\n ***** VLC improvement successful ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    3)
+      # Checking for Node.js
+      if ! command -v node &> /dev/null; then
+        echo "Install Node.js and Composer first"
+        return
+      fi
+
+      npm install -g asar create-react-app create-next-app express-generator eslint live-server http-server nodemon pnpm prettier sass sass-migrator typescript uglify-js yarn && printf "\n ***** Node.js global packages installed ***** \n"
+      composer global require laravel/installer friendsofphp/php-cs-fixer && printf "\n ***** Composer global packages installed ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    4)
+      sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop && printf "\n ***** Fixed System Monitor ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    5)
+      # echo "replace 'errors=remount-ro' with 'errors=remount-ro,noatime' only in the SSD mounted drives"
+      # sudo xed /etc/fstab
+      sudo sed -i "s|errors=remount-ro |errors=remount-ro,noatime |g" /etc/fstab && printf "\n ***** Reduced SSD Write ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    6)
+      sudo timedatectl set-local-rtc 1 --adjust-system-clock && printf "\n ***** Time and date set to RTC ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    7)
+      sudo apt-get install --reinstall msttcorefonts
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    8)
+      getDir
+
+      cd $DIRPATH && chmod -R -x+X *
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    9)
+      [ -d "$HOME/anaconda3" ] && echo "export PATH=\$PATH:$HOME/anaconda3/bin" >> ~/.profile && source ~/.profile && printf "\n ***** Anaconda added to environment path ***** \n"
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    10)
+      # Checking for MongoDB
+      if ! command -v mongosh &> /dev/null; then
+        printf "\nInstall MongoDB First!\n\n"
+        return
+      fi
+
+      # Code
+      read -p "Restart or Stop (r/s): " MONGOCTLCHOICE
+      
+      case "$MONGOCTLCHOICE" in 
+      [rR] | [rR][uU][nN])
+        sudo systemctl restart mongod && printf "\n ***** Mongodb restarted ***** \n"
+        ;;
+      [sS] | [sS][tT][oO][pP])
+        sudo systemctl stop mongod && printf "\n ***** MongoDB stopped ***** \n"
+        ;;
+      *)
+        echo "Invalid choice! Please enter r/run or s/stop"
+        ;;
+      esac
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    11)
+      # echo "options rtl8821ce fwlps=0 aspm=0 swenc=1" | sudo tee /etc/modprobe.d/rtl8821ce.conf && printf "\n ***** rtl8821ce driver improved ***** \n"
+      sudo apt install tlp
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    *)
+      echo "Invalid choice!"
+      ;;
+  esac
+}
+
+function antivirusManager() {
+  clear;
+  printf "
+  // ===== Antivirus Manager ===== //
+  0) Go back
+  1) Install ClamAV
+  2) Scan A Folder
+  3) Update ClamAV Database
+  "
+  read -p "Select Option: " UPDATEMANAGERCHOICE
+   
+  case "$UPDATEMANAGERCHOICE" in
+    0)
+      confirmFunc mainMenu "auto"
+      ;;
+    1)
+      sudo apt install clamav clamav-daemon && sudo service clamav-freshclam stop && sudo freshclam && sudo service clamav-freshclam start
+
+      # Confirm Exit
+      confirmFunc antivirusManager
+      ;;
+    2)
+      getDir
+
+      cd $DIRPATH && clamscan -ri .
+
+      # Confirm Exit
+      confirmFunc antivirusManager
+      ;;
+    3)
+      sudo service clamav-freshclam stop && sudo freshclam && sudo service clamav-freshclam start
+
+      # Confirm Exit
+      confirmFunc antivirusManager
+      ;;
+    *)
+      echo "Invalid choice!"
+      ;;
+  esac
+}
+
+function updateManager() {
+  clear;
+  printf "
+  // ===== Update Manager ===== //
+  0) Go Back
+  1) Update and Upgrade all packages
+  2) Hold update for a package
+  3) Remove the hold for a package
+  4) Show all packages on hold
+  "
+  read -p "Select Option: " UPDATEMANAGERCHOICE
+
+  case "$UPDATEMANAGERCHOICE" in
+    0)
+      confirmFunc mainMenu "auto"
+      ;;
+    1)
+      sudo apt update; sudo apt upgrade
+
+      # Confirm Exit
+      confirmFunc updateManager
+      ;;
+    2)
+      read -p "Enter Package Name: " PACKAGENAME
+      sudo apt-mark hold "$PACKAGENAME"
+
+      # Confirm Exit
+      confirmFunc updateManager
+      ;;
+    3)
+      read -p "Enter Package Name: " PACKAGENAME
+      sudo apt-mark unhold "$PACKAGENAME"
+
+      # Confirm Exit
+      confirmFunc updateManager
+      ;;
+    4)
+      sudo apt-mark showhold
+
+      # Confirm Exit
+      confirmFunc updateManager
+      ;;
+    *)
+      echo "Invalid choice!"
+      ;;
+  esac
+}
+
+function appInstaller() {
+  clear;
+  printf "
+  // ===== App Installer ===== //
+  0) Go Back
+  1) Repository - Developer Applications
+  2) Repository - Virtualbox
+  3) Repository - Virt manager (with KVM & QEMU)
+  4) Repository - Steam
+  5) Files - AppImage/Deb
+  6) Files - 'Anaconda3*.sh'
+  7) Files - 'xampp*.run' and 'composer.phar'
+  8) Online - Node Version Manager
+  9) Online - MongoDB
+  10) Online - Brave Browser
+  11) Flathub - Applications
+  "
+  read -p "Select Option: " APPINSTALLERCHOICE
+   
+  case "$APPINSTALLERCHOICE" in
+    0)
+      confirmFunc mainMenu "auto"
+      ;;
+    1)
+      echo "// ===== Install Developer Applications from Repository ===== //"
+      sudo apt install -y chromium codeblocks git gpick python3-pip # putty, filezilla
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    2)
+      echo "// ===== Install Virtualbox ===== //"
+      sudo apt install virtualbox virtualbox-ext-pack
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    3)
+      echo "// ===== Install Virt-manager (with KVM & QEMU) ===== //"
+      sudo apt install -y qemu qemu-kvm virt-manager bridge-utils && sudo usermod -aG libvirt $USER && sudo usermod -aG kvm $USER && sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    4)
+      echo "// ===== Install Steam ===== //"
+      sudo apt install -y steam-installer
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    5)
+      getDir
+
+      if [ -d $DIRPATH ]; then 
+        cd $DIRPATH
+
+        echo "// ===== Install .deb packages ===== //"
+        # find . -iname "*.deb" -type f -exec sudo gdebi "{}" ";"
+        find . -iname "*.deb" -type f -exec sudo dpkg -i "{}" ";"
+        sudo apt install -f
+
+        echo "// ===== Install .AppImage files ===== //"
+        find . -iname "*.AppImage" -type f | while read FILE; do appimageInstaller "$FILE"; done
+        
+        cd "$HOME/.local/bin"
+        [ -f "./figma-linux.AppImage" ] && sudo ./figma-linux.AppImage -i && sudo sed -i "s|Exec=AppRun --no-sandbox %U|Exec=figma-linux --no-sandbox %U|g" /usr/share/applications/figma-linux.desktop && rm $HOME/.local/share/applications/figma-linux.desktop
+      else
+        printf "\n ***** Invalid directory! ***** \n"
+      fi
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    6)
+      getDir
+
+      if [ -d $DIRPATH ]; then
+        cd $DIRPATH
+
+        echo "// ===== Install 'Anaconda3*.sh' file ===== //"
+        find . -iname "Anaconda*.sh" -type f -exec cp "{}" $HOME/.local/bin/anaconda.sh ";" && chmod +x $HOME/.local/bin/anaconda.sh && bash $HOME/.local/bin/anaconda.sh
+        rm $HOME/.local/bin/anaconda.sh
+      else
+        printf "\n ***** Invalid directory! ***** \n"
+      fi
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    7)
+      getDir
+
+      if [ -d $DIRPATH ]; then
+        cd $DIRPATH
+        
+        echo "// ===== Install 'xampp*.run' and 'composer.phar' files ===== //"
+        # Initializing XAMPP installer
+        find . -iname "xampp*.run" -type f -exec cp "{}" $HOME/.local/bin/xampp.run ";" && chmod +x $HOME/.local/bin/xampp.run && sudo $HOME/.local/bin/xampp.run
+        rm $HOME/.local/bin/xampp.run
+        
+        # Adding to Start Menu
+        find . -iname "xampp*.desktop" -type f -exec cp "{}" $HOME/.local/share/applications/xampp.desktop ";" && chmod +x $HOME/.local/share/applications/xampp.desktop
+
+        # Keeping default htdocs folder location
+        HTDOCSDIR="/home/$USER/workspace/php-web"
+        mkdir -p $HTDOCSDIR
+
+        # Setting htdocs folder location
+        echo "Replacing '/opt/lampp/htdocs' with $HTDOCSDIR"
+        mkdir -p "$HTDOCSDIR" && sudo sed -i "s|/opt/lampp/htdocs|$HTDOCSDIR|g;s|User daemon|User $USER|g;s|Group daemon|Group $USER|g" /opt/lampp/etc/httpd.conf
+
+        echo "// ===== Install Composer ===== //"
+        composerInstaller
+      else
+        printf "\n ***** Invalid directory! ***** \n"
+      fi
+
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    8)
+      echo "// ===== Install Node Version Manager ===== //"
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
+
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    9)
+      echo "// ===== Install MongoDB ===== //"
+      sudo apt-get install gnupg curl && curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    10)
+      echo "// ===== Install Brave Browser ===== //"
+      sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && sudo apt update && sudo apt install brave-browser
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    11)
+      # Checking for Flatpak
+      if ! command -v flatpak &> /dev/null; then
+        echo "Please install flatpak first!";
+      fi
+
+      # flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+      printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter\n"
+      read -p "Enter Package Name: " PACKAGE_NAME
+
+      if [ $PACKAGE_NAME == "bottles" ]; then
+        flatpak install flathub -y com.usebottles.bottles
+      elif [ $PACKAGE_NAME == "chromium" ]; then
+        flatpak install flathub -y com.github.Eloston.UngoogledChromium
+      elif [ $PACKAGE_NAME == "discord" ]; then
+        flatpak install flathub -y com.discordapp.Discord
+      elif [ $PACKAGE_NAME == "gimp" ]; then
+        flatpak install flathub -y org.gimp.GIMP
+      elif [ $PACKAGE_NAME == "handbrake" ]; then
+        flatpak install flathub -y fr.handbrake.ghb
+      elif [ $PACKAGE_NAME == "inkscape" ]; then
+        flatpak install flathub -y org.inkscape.Inkscape
+      elif [ $PACKAGE_NAME == "librewolf" ]; then
+        flatpak install flathub -y io.gitlab.librewolf-community
+      elif [ $PACKAGE_NAME == "nomacs" ]; then
+        flatpak install flathub -y org.nomacs.ImageLounge
+      elif [ $PACKAGE_NAME == "okular" ]; then
+        flatpak install flathub -y org.kde.okular
+      elif [ $PACKAGE_NAME == "telegram" ]; then
+        flatpak install flathub -y org.telegram.desktop
+      elif [ $PACKAGE_NAME == "tubeconverter" ]; then
+        flatpak install flathub -y org.nickvision.tubeconverter
+      else
+        flatpak install flathub $PACKAGE_NAME
+      fi
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    *)
+      echo "Invalid choice!"
+      ;;
+  esac
+}
+
+# Main Menu
+
+function mainMenu() {
+  clear;
+  printf "
+  // ===== Main Menu ===== //
+  0) Exit
+  1) Remove Bloatwares
+  2) Install Applications from Repository
+  3) Install Other Applications
+  4) Update Manager for apt
+  5) Antivirus Manager for apt
+  6) Defragment
+  7) Extra Configurations
+  "
+
+  read -p "Select Option: " mainChoice
+   
+  # Main Controller
+  case "$mainChoice" in 
+    0)
+      echo "Thank You!"
+      ;;
+    1)
+      sudo apt remove -y celluloid gnote xviewer seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
+
+      # Confirm Exit
+      confirmFunc mainMenu
+      ;;
+    2)
+      sudo apt install -y bleachbit copyq firejail git handbrake ibus libdvd-pkg mpv obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools
+      sudo dpkg-reconfigure libdvd-pkg
+
+      # Confirm Exit
+      confirmFunc mainMenu
+      ;;
+    3)
+      appInstaller
+      ;;
+    4)
+      updateManager
+      ;;
+    5)
+      antivirusManager
+      ;;
+    6)
+      defragment
+
+      # Confirm Exit
+      confirmFunc mainMenu
+      ;;
+    7)
+      extraConfig
+      ;;
+    *)
+      echo "Invalid choice!"
+
+      # Confirm Exit
+      confirmFunc mainMenu
+      ;;
+  esac
+}
+mainMenu

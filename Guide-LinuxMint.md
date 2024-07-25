@@ -90,7 +90,23 @@ switch = off
 volume = zero
 ```
 
-## Secure Boot - Sign VMware and VirtualBox
+## Secure Boot - Sign NVidia, VMware and VirtualBox
+
+### Sign NVidia
+
+```bash
+openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=NvidiaCustom/"
+
+# Signing VMware
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n nvidia-current)
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n nvidia-current-drm)
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n nvidia-current-modeset)
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n nvidia-current-peermem)
+sudo /usr/src/linux-headers-`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der $(modinfo -n nvidia-current-uvm)
+
+# Importing MOK key
+mokutil --import MOK.der
+```
 
 ### Sign VMware
 
