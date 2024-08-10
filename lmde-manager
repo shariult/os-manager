@@ -536,29 +536,29 @@ function appInstaller() {
       read -p "Enter Package Name: " PACKAGE_NAME
 
       if [ $PACKAGE_NAME == "bottles" ]; then
-        flatpak install flathub -y com.usebottles.bottles
+        flatpak install --user flathub -y com.usebottles.bottles
       elif [ $PACKAGE_NAME == "chromium" ]; then
-        flatpak install flathub -y com.github.Eloston.UngoogledChromium
+        flatpak install --user flathub -y com.github.Eloston.UngoogledChromium
       elif [ $PACKAGE_NAME == "discord" ]; then
-        flatpak install flathub -y com.discordapp.Discord
+        flatpak install --user flathub -y com.discordapp.Discord
       elif [ $PACKAGE_NAME == "gimp" ]; then
-        flatpak install flathub -y org.gimp.GIMP
+        flatpak install --user flathub -y org.gimp.GIMP
       elif [ $PACKAGE_NAME == "handbrake" ]; then
-        flatpak install flathub -y fr.handbrake.ghb
+        flatpak install --user flathub -y fr.handbrake.ghb
       elif [ $PACKAGE_NAME == "inkscape" ]; then
-        flatpak install flathub -y org.inkscape.Inkscape
+        flatpak install --user flathub -y org.inkscape.Inkscape
       elif [ $PACKAGE_NAME == "librewolf" ]; then
-        flatpak install flathub -y io.gitlab.librewolf-community
+        flatpak install --user flathub -y io.gitlab.librewolf-community
       elif [ $PACKAGE_NAME == "nomacs" ]; then
-        flatpak install flathub -y org.nomacs.ImageLounge
+        flatpak install --user flathub -y org.nomacs.ImageLounge
       elif [ $PACKAGE_NAME == "okular" ]; then
-        flatpak install flathub -y org.kde.okular
+        flatpak install --user flathub -y org.kde.okular
       elif [ $PACKAGE_NAME == "telegram" ]; then
-        flatpak install flathub -y org.telegram.desktop
+        flatpak install --user flathub -y org.telegram.desktop
       elif [ $PACKAGE_NAME == "tubeconverter" ]; then
-        flatpak install flathub -y org.nickvision.tubeconverter
+        flatpak install --user flathub -y org.nickvision.tubeconverter
       else
-        flatpak install flathub $PACKAGE_NAME
+        flatpak install --user flathub $PACKAGE_NAME
       fi
       
       # Confirm Exit
