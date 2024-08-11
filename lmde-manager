@@ -530,7 +530,7 @@ function appInstaller() {
         echo "Please install flatpak first!";
       fi
 
-      # flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
       printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter\n"
       read -p "Enter Package Name: " PACKAGE_NAME
