@@ -4,12 +4,15 @@ A Guide on setting up Linux mint after installation. Most of the instructions be
 
 ## Update Manager
 
-1. After installing Mint configure update manager first. Select best server for fetching update and switch on/off update settings.
-2. After Fixing Preference, install update.
-3. Drivers
-4. Install available drivers.
-5. Restart
-6. Transfer User Files
+1. Turn on Firewall
+2. Linux mint Welcome Screen tasks, Select best server in Software sources
+3. Configure Update manager, Install updates
+4. Transfer User Files (dot files)
+5. Select themes and icons
+6. Disk mount options
+7. Copy "lmde-manager" to "~/.local/bin"
+8. Install Nvidia driver and sign it
+9. Restart
 
 ## Mint Settings
 
@@ -24,12 +27,11 @@ A Guide on setting up Linux mint after installation. Most of the instructions be
 - Preferred Application: Removable Media (off)
 - Privacy: Remember recently accessed file (off)
 - Screensaver: Customize > Allow floating clock and album art widget (off) + Show media player controls (off) + Show album art (off)
-- Startup Applications: mintwelcome + Print Queue Applet + Support for NVIDIA Prime + Warpinator (off)
+- Startup Applications: mintwelcome + Print Queue Applet + Warpinator (off)
 - Windows: Behavior > Special key to move and resize window (Super)
 - Disks: Turn on 'Enable Write Cache' in linux root partition
 - Sound: Output > Volume (100%), Settings > Maximum volume (150%)
-- Firewall: Turn on
-- Change Terminal: size 'w: 199 h: 49', Font 'MesloLGS Nerd Font Mono', Text editor theme, Preferences > Scrolling > Show scrollbar, General > Show menubar
+- Change Terminal: size 'w: 199 h: 47', Font 'MesloLGS Nerd Font Mono', Text editor theme, Preferences > Scrolling > Show scrollbar, General > Show menubar
 
 ## Shortcuts
 
@@ -148,7 +150,7 @@ sudo vmware-networks --start
 
 ## Game Launch Options
 
-Steam Proton GE location: `~/.steam/root/compatibilitytools.d/`. Use following tweaks only if game crashes or error occurs,
+Steam Proton GE location: "~/.steam/root/compatibilitytools.d/". Use following tweaks only if game crashes or error occurs,
 
 - Seraph: If having issue use this command, `PROTON_USE_WINED3D=1 %command%`
 - Skyrim: Use Proton GE and this command, `WINEDDLOVERRIDES="xaudio2_7=n,b" PULSE_LATENCY_MSEC=90 %command%`
@@ -159,20 +161,4 @@ Steam Proton GE location: `~/.steam/root/compatibilitytools.d/`. Use following t
 WINE_FULLSCREEN_FSR=1 WINE_FULLSCREEN_FSR_STRENGTH=4 %command%
 # Use Nvidia Image Sharpening
 PROTON_HIDE_NVIDIA_GPU=0 PROTON_ENABLE_NVAPI=1 %command%`
-```
-
-## Useful Commands
-
-```bash
-# Show GPU Options
-sudo nano /usr/share/X11/xorg.conf.d/10-nvidia.conf
-# Add text before end section: Option "CoolBits" "12"
-
-# 7zip
-7zip-linux a ./JLib.7z ./JLib/* -p"Password" -v20g -mhe
-# -mhe -> Encrypts filename
-# -v20g -> Split volume into 20GB per pieces
-
-# Run with Nvidia GPU
-__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia
 ```

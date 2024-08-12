@@ -407,7 +407,7 @@ function appInstaller() {
       ;;
     1)
       echo "// ===== Install Developer Applications from Repository ===== //"
-      sudo apt install -y chromium codeblocks git gpick python3-pip # putty, filezilla
+      sudo apt install -y chromium git gpick python3-pip # putty, filezilla
       
       # Confirm Exit
       confirmFunc appInstaller
@@ -594,7 +594,7 @@ function mainMenu() {
       echo "Thank You!"
       ;;
     1)
-      sudo apt remove -y celluloid gnote xviewer seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
+      sudo apt remove -y celluloid gnote seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
 
       # Confirm Exit
       confirmFunc mainMenu
