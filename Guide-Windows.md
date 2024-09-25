@@ -170,7 +170,7 @@ wsl --unregister Debian
 If Windows is installed after Ubuntu then use this method to fix bootloader by changing from Windows bootloader to Grub. Run cmd as adminstrator in Windows,
 
 ```cmd
-bcedit /set {bootmgr} path \EFI\ubuntu\grubx64.efi
+bcdedit /set {bootmgr} path \EFI\ubuntu\grubx64.efi
 ```
 
 In Linux,
