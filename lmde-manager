@@ -407,7 +407,7 @@ function appInstaller() {
       ;;
     1)
       echo "// ===== Install Developer Applications from Repository ===== //"
-      sudo apt install -y chromium git gpick python3-pip # putty, filezilla
+      sudo apt install -y chromium codeblocks git gpick python3-pip # putty, filezilla
       
       # Confirm Exit
       confirmFunc appInstaller
@@ -421,7 +421,25 @@ function appInstaller() {
       ;;
     3)
       echo "// ===== Install Virt-manager (with KVM & QEMU) ===== //"
-      sudo apt install -y qemu qemu-kvm virt-manager bridge-utils && sudo usermod -aG libvirt $USER && sudo usermod -aG kvm $USER && sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
+      # sudo apt install -y qemu qemu-kvm virt-manager bridge-utils && sudo usermod -aG libvirt $USER && sudo usermod -aG kvm $USER && sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
+      
+      sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virt-manager  virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
+
+      sudo systemctl enable libvirtd.service
+      sudo systemctl start libvirtd.service
+
+      sudo virt-host-validate qemu
+
+      sudo systemctl enable --now tuned
+      sudo tuned-adm profile virtual-host
+      tuned-adm active
+      sudo tuned-adm verify
+
+      sudo usermod -aG libvirt $USER
+
+      sudo setfacl -R -b /var/lib/libvirt/images/
+      sudo setfacl -R -m u:$USER:rwX /var/lib/libvirt/images/
+      sudo setfacl -m d:u:$USER:rwx /var/lib/libvirt/images/
       
       # Confirm Exit
       confirmFunc appInstaller
@@ -594,7 +612,7 @@ function mainMenu() {
       echo "Thank You!"
       ;;
     1)
-      sudo apt remove -y celluloid gnote seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
+      sudo apt remove -y celluloid gnote xviewer seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
 
       # Confirm Exit
       confirmFunc mainMenu
