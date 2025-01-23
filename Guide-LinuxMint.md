@@ -10,9 +10,9 @@ A Guide on setting up Linux mint after installation. Most of the instructions be
 4. Transfer User Files (dot files)
 5. Select themes and icons
 6. Disk mount options
-7. Copy "lmde-manager" to "~/.local/bin"
-8. Install Nvidia driver and sign it
-9. Restart
+7. Install starship and nvim for terminal
+8. Copy "lmde-manager" to "~/.local/bin"
+9. Install Nvidia driver and sign it and Restart
 
 ## Mint Settings
 
@@ -76,9 +76,9 @@ Main Categories: AudioVideo, Audio, Video, Development, Education, Game, Graphic
 
 SubCategories: Building, Debugger, IDE, GUIDesigner, Profiling, RevisionControl, Translation, Calendar, ContactManagement, Database, Dictionary, Chart, Email, Finance, FlowChart, PDA, ProjectManagement, Presentation, Spreadsheet, WordProcessor, 2DGraphics, VectorGraphics, RasterGraphics, 3DGraphics, Scanning, OCR, Photography, Publishing, Viewer, TextTools, DesktopSettings, HardwareSettings, Printing, PackageManager, Dialup, InstantMessaging, Chat, IRCClient, FileTransfer, HamRadio, News, P2P, RemoteAccess, Telephony, TelephonyTools, VideoConference, WebBrowser, WebDevelopment, Midi, Mixer, Sequencer, Tuner, TV, AudioVideoEditing, Player, Recorder, DiscBurning, ActionGame, AdventureGame, ArcadeGame, BoardGame, BlocksGame, CardGame, KidsGame, LogicGame, RolePlaying, Simulation, SportsGame, StrategyGame, Art, Construction, Music, Languages, Science, ArtificialIntelligence, Astronomy, Biology, Chemistry, ComputerScience, DataVisualization, Economy, Electricity, Geography, Geology, Geoscience, History, ImageProcessing, Literature, Math, NumericalAnalysis, MedicalSoftware, Physics, Robotics, Sports, ParallelComputing, Amusement, Archiving, Compression, Electronics, Emulator, Engineering, FileTools, FileManager, TerminalEmulator, Filesystem, Monitor, Security, Accessibility, Calculator, Clock, TextEditor, Documentation, Core, KDE, GNOME, GTK, Qt, Motif, Java, ConsoleOnly
 
-## Fix Front Panel Sound Issue
+## Fix Sound Issue (for non HD Audio)
 
-In the BIOS settings change "HD audio" to "AC97".
+This issue mainly occurs if PC casing does not support HD Audio. In the BIOS settings change "HD audio" to "AC97".
 
 ```bash
 sudo xed /usr/share/pulseaudio/alsa-mixer/paths/analog-output-headphones.conf

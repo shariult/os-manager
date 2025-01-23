@@ -10,10 +10,10 @@ A Guide on setting up Windows after installation.
 4. C:\\ Drive > Properties > Allow files on this drive... (Uncheck)
 5. Indexing options
 6. Turn on System restore
-7. [Debloat Windows](https://github.com/Sycnex/Windows10Debloater), Edit `C:\Windows\System32\drivers\etc\hosts` file
+7. [Debloat Windows](https://github.com/Raphire/Win11Debloat), Edit `C:\Windows\System32\drivers\etc\hosts` file
 8. Install Drivers
 9. Unpin applications + Defragment settings + [O&O shutup 10](https://www.oo-software.com/en/shutup10) + Restart
-10. Winodows Update + Restart
+10. Windows Update + Restart
 11. Activate .Net 3.5 + Windows Update Recheck
 12. Device encryption > Turn off + Settings (Minimal)
 13. Fix taskbar + Task manager settings

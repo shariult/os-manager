@@ -175,6 +175,7 @@ function extraConfig() {
   9) Add Anaconda to environment path
   10) Restart or Stop Mongodb
   11) Install Tlp for Laptops
+  12) swapfile Setup - Swap Size 8 Gigabytes
   "
   read -p "Select Option: " EXTRACONFIGCHOICE
   
@@ -283,6 +284,12 @@ function extraConfig() {
     11)
       # echo "options rtl8821ce fwlps=0 aspm=0 swenc=1" | sudo tee /etc/modprobe.d/rtl8821ce.conf && printf "\n ***** rtl8821ce driver improved ***** \n"
       sudo apt install tlp
+
+      # Confirm Exit
+      confirmFunc extraConfig
+      ;;
+    12)
+      sudo fallocate -l 8G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && sudo grep -Fxq "/swapfile none swap defaults 0" /etc/fstab || echo "/swapfile none swap defaults 0" | sudo tee -a /etc/fstab
 
       # Confirm Exit
       confirmFunc extraConfig
@@ -612,7 +619,7 @@ function mainMenu() {
       echo "Thank You!"
       ;;
     1)
-      sudo apt remove -y celluloid gnote xviewer seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
+      sudo apt remove -y celluloid gnote seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
 
       # Confirm Exit
       confirmFunc mainMenu
