@@ -557,7 +557,7 @@ function appInstaller() {
 
       flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-      printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter\n"
+      printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter,filezilla\n"
       read -p "Enter Package Name: " PACKAGE_NAME
 
       if [ $PACKAGE_NAME == "bottles" ]; then
@@ -582,6 +582,8 @@ function appInstaller() {
         flatpak install --user flathub -y org.telegram.desktop
       elif [ $PACKAGE_NAME == "tubeconverter" ]; then
         flatpak install --user flathub -y org.nickvision.tubeconverter
+      elif [ $PACKAGE_NAME == "filezilla" ]; then
+        flatpak install --user flathub -y org.filezillaproject.Filezilla
       else
         flatpak install --user flathub $PACKAGE_NAME
       fi
