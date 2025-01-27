@@ -530,7 +530,7 @@ function appInstaller() {
       ;;
     8)
       echo "// ===== Install Node Version Manager ===== //"
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
 
       # Confirm Exit
       confirmFunc appInstaller
@@ -557,7 +557,7 @@ function appInstaller() {
 
       flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-      printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter,filezilla\n"
+      printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter, filezilla\n"
       read -p "Enter Package Name: " PACKAGE_NAME
 
       if [ $PACKAGE_NAME == "bottles" ]; then
@@ -621,14 +621,13 @@ function mainMenu() {
       echo "Thank You!"
       ;;
     1)
-      sudo apt remove -y celluloid gnote seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox sticky transmission-gtk && printf "\n ***** Bloatware removed ***** \n"
+      sudo apt remove -y celluloid gnote seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox transmission-gtk xviewer && printf "\n ***** Bloatware removed ***** \n"
 
       # Confirm Exit
       confirmFunc mainMenu
       ;;
     2)
-      sudo apt install -y bleachbit copyq firejail git handbrake ibus libdvd-pkg mpv obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools
-      sudo dpkg-reconfigure libdvd-pkg
+      sudo apt install -y bleachbit copyq firejail git handbrake ibus libdvd-pkg mpv obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools && sudo dpkg-reconfigure libdvd-pkg
 
       # Confirm Exit
       confirmFunc mainMenu
