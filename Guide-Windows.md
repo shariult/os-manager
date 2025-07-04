@@ -121,7 +121,7 @@ fsutil.exe file setCaseSensitiveInfo <path> enable
 mklink /J "<link-path>" "<target-path>"
 
 ## Bypass OOBE - shift+F10 to bring Command prompt
-oobe/BypassNRO
+oobe\BypassNRO
 ```
 
 ### Search Queries for Windows
