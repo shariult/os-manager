@@ -210,7 +210,7 @@ function extraConfig() {
         return
       fi
 
-      npm install -g asar create-next-app eslint live-server http-server nodemon pnpm prettier sass typescript uglify-js yarn && printf "\n ***** Node.js global packages installed ***** \n"
+      npm install -g pnpm && pnpm setup && pnpm add -g asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js && printf "\n ***** Node.js global packages installed ***** \n"
       composer global require laravel/installer friendsofphp/php-cs-fixer && printf "\n ***** Composer global packages installed ***** \n"
 
       # Confirm Exit
@@ -530,7 +530,7 @@ function appInstaller() {
       ;;
     8)
       echo "// ===== Install Node Version Manager ===== //"
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
 
       # Confirm Exit
       confirmFunc appInstaller
@@ -557,7 +557,7 @@ function appInstaller() {
 
       flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-      printf "\nAvailable Packages: bottles, chromium,  discord, gimp, handbrake, inkscape, librewolf, nomacs, okular, telegram, tubeconverter, filezilla\n"
+      printf "\nAvailable Packages: bottles, chromium,  discord, librewolf, telegram, tubeconverter, filezilla\n"
       read -p "Enter Package Name: " PACKAGE_NAME
 
       if [ $PACKAGE_NAME == "bottles" ]; then
@@ -566,18 +566,8 @@ function appInstaller() {
         flatpak install --user flathub -y com.github.Eloston.UngoogledChromium
       elif [ $PACKAGE_NAME == "discord" ]; then
         flatpak install --user flathub -y com.discordapp.Discord
-      elif [ $PACKAGE_NAME == "gimp" ]; then
-        flatpak install --user flathub -y org.gimp.GIMP
-      elif [ $PACKAGE_NAME == "handbrake" ]; then
-        flatpak install --user flathub -y fr.handbrake.ghb
-      elif [ $PACKAGE_NAME == "inkscape" ]; then
-        flatpak install --user flathub -y org.inkscape.Inkscape
       elif [ $PACKAGE_NAME == "librewolf" ]; then
         flatpak install --user flathub -y io.gitlab.librewolf-community
-      elif [ $PACKAGE_NAME == "nomacs" ]; then
-        flatpak install --user flathub -y org.nomacs.ImageLounge
-      elif [ $PACKAGE_NAME == "okular" ]; then
-        flatpak install --user flathub -y org.kde.okular
       elif [ $PACKAGE_NAME == "telegram" ]; then
         flatpak install --user flathub -y org.telegram.desktop
       elif [ $PACKAGE_NAME == "tubeconverter" ]; then
@@ -627,7 +617,7 @@ function mainMenu() {
       confirmFunc mainMenu
       ;;
     2)
-      sudo apt install -y bleachbit copyq firejail git handbrake ibus libdvd-pkg mpv obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools && sudo dpkg-reconfigure libdvd-pkg
+      sudo apt install -y bleachbit copyq firejail git handbrake ibus libdvd-pkg mpv obs-studio okular qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools && sudo dpkg-reconfigure libdvd-pkg
 
       # Confirm Exit
       confirmFunc mainMenu
