@@ -210,7 +210,7 @@ function extraConfig() {
         return
       fi
 
-      npm install -g pnpm && pnpm setup && pnpm add -g asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js && printf "\n ***** Node.js global packages installed ***** \n"
+      npm install -g pnpm && pnpm setup && pnpm add -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js && printf "\n ***** Node.js global packages installed ***** \n"
       composer global require laravel/installer friendsofphp/php-cs-fixer && printf "\n ***** Composer global packages installed ***** \n"
 
       # Confirm Exit
