@@ -25,6 +25,7 @@ function getDir() {
 
 function vlcAutoplayer() {
 mkdir -p $HOME/.config/vlc
+sudo apt install mpv
 cat << EOF > $HOME/.config/vlc/vlc.sh
 #!/bin/bash
 shopt -s extglob
@@ -175,7 +176,7 @@ function extraConfig() {
   9) Add Anaconda to environment path
   10) Restart or Stop Mongodb
   11) Install Tlp for Laptops
-  12) swapfile Setup - Swap Size 8 Gigabytes
+  12) swapfile Setup - Swap Size 12 Gigabytes
   "
   read -p "Select Option: " EXTRACONFIGCHOICE
   
@@ -210,8 +211,19 @@ function extraConfig() {
         return
       fi
 
-      npm install -g pnpm && pnpm setup && pnpm add -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js && printf "\n ***** Node.js global packages installed ***** \n"
-      composer global require laravel/installer friendsofphp/php-cs-fixer && printf "\n ***** Composer global packages installed ***** \n"
+      # Install pnpm
+      if ! command -v pnpm &> /dev/null; then
+          npm install -g pnpm && pnpm setup && source ~/.bashrc && printf "\n ***** PNPM installed. Restart the terminal and run this option again to install the global packages ***** \n"
+      else
+          pnpm add -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js
+      fi
+
+      # Install laravel
+      if ! command -v laravel &> /dev/null; then
+          composer global require laravel/installer friendsofphp/php-cs-fixer && printf "\n ***** Composer global packages installed ***** \n"
+      elif command -v pnpm &> /dev/null; then
+          echo "Packages already installed."
+      fi
 
       # Confirm Exit
       confirmFunc extraConfig
@@ -289,7 +301,7 @@ function extraConfig() {
       confirmFunc extraConfig
       ;;
     12)
-      sudo fallocate -l 8G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && sudo grep -Fxq "/swapfile none swap defaults 0" /etc/fstab || echo "/swapfile none swap defaults 0" | sudo tee -a /etc/fstab
+      sudo fallocate -l 12G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile && sudo grep -Fxq "/swapfile none swap defaults 0" /etc/fstab || echo "/swapfile none swap defaults 0" | sudo tee -a /etc/fstab
 
       # Confirm Exit
       confirmFunc extraConfig
@@ -428,9 +440,16 @@ function appInstaller() {
       ;;
     3)
       echo "// ===== Install Virt-manager (with KVM & QEMU) ===== //"
-      # sudo apt install -y qemu qemu-kvm virt-manager bridge-utils && sudo usermod -aG libvirt $USER && sudo usermod -aG kvm $USER && sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
       
-      sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virt-manager  virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
+      if grep -q 'LMDE' /etc/os-release; then
+          echo "This is Linux Mint Debian Edition (LMDE)."
+          sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virt-manager virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
+      elif grep -qi 'NAME="Linux Mint"' /etc/os-release; then
+          echo "This is Linux Mint (Ubuntu-based)."
+          sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virtiofsd virt-manager virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
+      else
+          echo "This is an unknown Linux distribution."
+      fi
 
       sudo systemctl enable libvirtd.service
       sudo systemctl start libvirtd.service
@@ -530,21 +549,31 @@ function appInstaller() {
       ;;
     8)
       echo "// ===== Install Node Version Manager ===== //"
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && printf "\n Restart Terminal and run 'nvm install 20' \n";
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && source ~/.bashrc && printf "\n Restart Terminal and run 'nvm install --lts' \n";
 
       # Confirm Exit
       confirmFunc appInstaller
       ;;
     9)
       echo "// ===== Install MongoDB ===== //"
-      sudo apt-get install gnupg curl && curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
+
+      if grep -q 'LMDE' /etc/os-release; then
+          echo "This is Linux Mint Debian Edition (LMDE)."
+          sudo apt-get install gnupg curl && curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
+      elif grep -qi 'NAME="Linux Mint"' /etc/os-release; then
+          echo "This is Linux Mint (Ubuntu-based)."
+          sudo apt-get install gnupg curl && curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor && echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
+      else
+          echo "This is an unknown Linux distribution."
+      fi
       
       # Confirm Exit
       confirmFunc appInstaller
       ;;
     10)
       echo "// ===== Install Brave Browser ===== //"
-      sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && sudo apt update && sudo apt install brave-browser
+      # sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && sudo apt update && sudo apt install brave-browser
+      curl -fsS https://dl.brave.com/install.sh | sh
       
       # Confirm Exit
       confirmFunc appInstaller
@@ -611,13 +640,13 @@ function mainMenu() {
       echo "Thank You!"
       ;;
     1)
-      sudo apt remove -y celluloid gnote seahorse warpinator drawing hexchat hexchat-common transmission hypnotix rhythmbox transmission-gtk xviewer && printf "\n ***** Bloatware removed ***** \n"
+      sudo apt remove -y celluloid seahorse warpinator drawing transmission hypnotix rhythmbox transmission-gtk xviewer xreader && printf "\n ***** Bloatware removed ***** \n"
 
       # Confirm Exit
       confirmFunc mainMenu
       ;;
     2)
-      sudo apt install -y bleachbit copyq firejail git handbrake ibus libdvd-pkg mpv obs-studio okular qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools && sudo dpkg-reconfigure libdvd-pkg
+      sudo apt install -y bleachbit copyq evince firejail git handbrake ibus libdvd-pkg obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools xclip && sudo dpkg-reconfigure libdvd-pkg
 
       # Confirm Exit
       confirmFunc mainMenu
