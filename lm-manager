@@ -214,6 +214,7 @@ function extraConfig() {
       # Install pnpm
       if ! command -v pnpm &> /dev/null; then
           npm install -g pnpm && pnpm setup;
+          pnpm config set store-dir ~/.pnpm-store
           export PNPM_HOME="$HOME/.local/share/pnpm"
           case ":$PATH:" in
             *":$PNPM_HOME:"*) ;;
