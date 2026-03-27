@@ -211,25 +211,15 @@ function extraConfig() {
         return
       fi
 
-      # Install pnpm
-      if ! command -v pnpm &> /dev/null; then
-          npm install -g pnpm && pnpm setup;
-          pnpm config set store-dir ~/.pnpm-store
-          export PNPM_HOME="$HOME/.local/share/pnpm"
-          case ":$PATH:" in
-            *":$PNPM_HOME:"*) ;;
-            *) export PATH="$PNPM_HOME:$PATH" ;;
-          esac # pnpm end
-          pnpm add -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js
-          printf "\n ***** PNPM global packages installed ***** \n"
-      else
-          pnpm add -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js && printf "\n ***** PNPM global packages installed ***** \n"
-      fi
+      npm install -g pnpm && pnpm setup;
+      pnpm config set store-dir ~/.pnpm-store
+      npm install -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js
+      printf "\n ***** NPM global packages installed ***** \n"
 
       # Install laravel
       if ! command -v laravel &> /dev/null; then
           composer global require laravel/installer friendsofphp/php-cs-fixer && printf "\n ***** Composer global packages installed ***** \n"
-      elif command -v pnpm &> /dev/null; then
+      elif command -v laravel &> /dev/null; then
           echo "Packages already installed."
       fi
 
@@ -557,7 +547,7 @@ function appInstaller() {
       ;;
     8)
       echo "// ===== Install Node Version Manager ===== //"
-      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash;
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
       export NVM_DIR="$HOME/.nvm"
       [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
       [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -653,13 +643,13 @@ function mainMenu() {
       echo "Thank You!"
       ;;
     1)
-      sudo apt remove -y celluloid seahorse warpinator drawing transmission hypnotix rhythmbox transmission-gtk xviewer xreader && printf "\n ***** Bloatware removed ***** \n"
+      sudo apt remove -y celluloid seahorse warpinator drawing transmission hypnotix rhythmbox transmission-gtk xviewer xreader pix && printf "\n ***** Bloatware removed ***** \n"
 
       # Confirm Exit
       confirmFunc mainMenu
       ;;
     2)
-      sudo apt install -y bleachbit copyq evince firejail git handbrake ibus libdvd-pkg obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra net-tools xclip && sudo dpkg-reconfigure libdvd-pkg
+      sudo apt install -y bleachbit copyq evince firejail git handbrake ibus libdvd-pkg obs-studio qbittorrent curl ffmpegthumbnailer libavcodec-extra mediainfo net-tools nomacs xclip && sudo dpkg-reconfigure libdvd-pkg
 
       # Confirm Exit
       confirmFunc mainMenu
