@@ -410,7 +410,7 @@ function appInstaller() {
   4) Repository - Steam
   5) Files - AppImage/Deb
   6) Files - 'Anaconda3*.sh'
-  7) Files - 'xampp*.run' and 'composer.phar'
+  7) Files - 'composer.phar'
   8) Online - Native Docker
   9) Online - Node Version Manager
   10) Online - MongoDB
@@ -425,7 +425,7 @@ function appInstaller() {
       ;;
     1)
       echo "// ===== Install Developer Applications from Repository ===== //"
-      sudo apt install -y chromium codeblocks git gpick php-cli python3-pip # putty, filezilla
+      sudo apt install -y chromium codeblocks git gpick php-cli php8.4-curl php8.4-zip python3-pip # putty, filezilla
       
       # Confirm Exit
       confirmFunc appInstaller
@@ -520,25 +520,29 @@ function appInstaller() {
 
       if [ -d $DIRPATH ]; then
         cd $DIRPATH
-        
+
         echo "// ===== Install 'xampp*.run' and 'composer.phar' files ===== //"
+        find . -iname "composer*.phar" -type f -exec cp "{}" $HOME/.local/bin/composer ";" && chmod +x $HOME/.local/bin/composer
+
+        
+        # echo "// ===== Install 'xampp*.run' and 'composer.phar' files ===== //"
         # Initializing XAMPP installer
-        find . -iname "xampp*.run" -type f -exec cp "{}" $HOME/.local/bin/xampp.run ";" && chmod +x $HOME/.local/bin/xampp.run && sudo $HOME/.local/bin/xampp.run
-        rm $HOME/.local/bin/xampp.run
+        # find . -iname "xampp*.run" -type f -exec cp "{}" $HOME/.local/bin/xampp.run ";" && chmod +x $HOME/.local/bin/xampp.run && sudo $HOME/.local/bin/xampp.run
+        # rm $HOME/.local/bin/xampp.run
         
         # Adding to Start Menu
-        find . -iname "xampp*.desktop" -type f -exec cp "{}" $HOME/.local/share/applications/xampp.desktop ";" && chmod +x $HOME/.local/share/applications/xampp.desktop
+        # find . -iname "xampp*.desktop" -type f -exec cp "{}" $HOME/.local/share/applications/xampp.desktop ";" && chmod +x $HOME/.local/share/applications/xampp.desktop
 
         # Keeping default htdocs folder location
-        HTDOCSDIR="/home/$USER/workspace/php-web"
-        mkdir -p $HTDOCSDIR
+        # HTDOCSDIR="/home/$USER/workspace/php-web"
+        # mkdir -p $HTDOCSDIR
 
         # Setting htdocs folder location
-        echo "Replacing '/opt/lampp/htdocs' with $HTDOCSDIR"
-        mkdir -p "$HTDOCSDIR" && sudo sed -i "s|/opt/lampp/htdocs|$HTDOCSDIR|g;s|User daemon|User $USER|g;s|Group daemon|Group $USER|g" /opt/lampp/etc/httpd.conf
+        # echo "Replacing '/opt/lampp/htdocs' with $HTDOCSDIR"
+        # mkdir -p "$HTDOCSDIR" && sudo sed -i "s|/opt/lampp/htdocs|$HTDOCSDIR|g;s|User daemon|User $USER|g;s|Group daemon|Group $USER|g" /opt/lampp/etc/httpd.conf
 
-        echo "// ===== Install Composer ===== //"
-        composerInstaller
+        # echo "// ===== Install Composer ===== //"
+        # composerInstaller
       else
         printf "\n ***** Invalid directory! ***** \n"
       fi
