@@ -442,7 +442,7 @@ function appInstaller() {
       
       if grep -q 'LMDE' /etc/os-release; then
           echo "This is Linux Mint Debian Edition (LMDE)."
-          sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virt-manager virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
+          sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virtiofsd virt-manager virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
       elif grep -qi 'NAME="Linux Mint"' /etc/os-release; then
           echo "This is Linux Mint (Ubuntu-based)."
           sudo apt install qemu-system-x86 libvirt-daemon-system virtinst virtiofsd virt-manager virt-viewer guestfs-tools libosinfo-bin ovmf swtpm qemu-utils tuned
