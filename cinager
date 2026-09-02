@@ -211,9 +211,9 @@ function extraConfig() {
         return
       fi
 
-      npm install -g pnpm && pnpm setup;
+      npm install -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon npm pnpm prettier sass typescript uglify-js
+      mkdir -p ~/.pnpm-store && pnpm setup;
       pnpm config set store-dir ~/.pnpm-store
-      npm install -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon prettier sass typescript uglify-js
       printf "\n ***** NPM global packages installed ***** \n"
 
       # Install laravel
@@ -405,17 +405,19 @@ function appInstaller() {
   // ===== App Installer ===== //
   0) Go Back
   1) Repository - Developer Applications
-  2) Repository - Virtualbox
-  3) Repository - Virt manager (with KVM & QEMU)
-  4) Repository - Steam
-  5) Files - AppImage/Deb
-  6) Files - 'Anaconda3*.sh'
-  7) Files - 'composer.phar'
-  8) Online - Native Docker
-  9) Online - Node Version Manager
-  10) Online - MongoDB
-  11) Online - Brave Browser
-  12) Flathub - Applications
+  2) Repository - Developer Apps for Virtual Environment
+  3) Repository - Virtualbox
+  4) Repository - Virt manager (with KVM & QEMU)
+  5) Repository - Steam
+  6) Files - AppImage/Deb
+  7) Files - 'Anaconda3*.sh'
+  8) Files - 'composer.phar'
+  9) Online - Native Docker
+  10) Online - Node Version Manager
+  11) Online - MongoDB
+  12) Online - DDev (Install Docker first)
+  13) Online - Brave Browser
+  14) Flathub - Applications
   "
   read -p "Select Option: " APPINSTALLERCHOICE
    
@@ -425,19 +427,27 @@ function appInstaller() {
       ;;
     1)
       echo "// ===== Install Developer Applications from Repository ===== //"
-      sudo apt install -y codeblocks git gpick php-cli php8.4-curl php8.4-zip python3-pip # putty, filezilla, chromium
+      sudo apt install -y codeblocks git gpick php-cli php8.4-curl php8.4-zip python3-pip # putty filezilla chromium
       
       # Confirm Exit
       confirmFunc appInstaller
       ;;
     2)
+      echo "// ===== Installing Apps for Dev Env ===== //"
+      sudo apt install -y bleachbit firejail git ibus curl ffmpegthumbnailer libavcodec-extra libfuse2t64 mediainfo vlc
+      sudo apt install -y codeblocks gpick php-cli php8.4-curl php8.4-zip python3-pip putty filezilla
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    3)
       echo "// ===== Install Virtualbox ===== //"
       sudo apt install virtualbox virtualbox-ext-pack
       
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    3)
+    4)
       echo "// ===== Install Virt-manager (with KVM & QEMU) ===== //"
       
       if grep -q 'LMDE' /etc/os-release; then
@@ -473,14 +483,14 @@ function appInstaller() {
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    4)
+    5)
       echo "// ===== Install Steam ===== //"
       sudo apt install -y steam-installer
       
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    5)
+    6)
       getDir
 
       if [ -d $DIRPATH ]; then 
@@ -503,7 +513,7 @@ function appInstaller() {
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    6)
+    7)
       getDir
 
       if [ -d $DIRPATH ]; then
@@ -519,13 +529,13 @@ function appInstaller() {
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    7)
+    8)
       getDir
 
       if [ -d $DIRPATH ]; then
         cd $DIRPATH
 
-        echo "// ===== Install 'xampp*.run' and 'composer.phar' files ===== //"
+        echo "// ===== Install 'composer.phar' files ===== //"
         find . -iname "composer*.phar" -type f -exec cp "{}" $HOME/.local/bin/composer ";" && chmod +x $HOME/.local/bin/composer
 
         
@@ -554,7 +564,7 @@ function appInstaller() {
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    8)
+    9)
       echo "// ===== Install Native Docker ===== //"
 
       # Add Docker's official GPG key:
@@ -581,7 +591,7 @@ EOF
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    9)
+    10)
       echo "// ===== Install Node Version Manager ===== //"
       curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
       export NVM_DIR="$HOME/.nvm"
@@ -593,11 +603,11 @@ EOF
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    10)
+    11)
       echo "// ===== Install MongoDB ===== //"
 
-      if grep -q 'LMDE' /etc/os-release; then
-          echo "This is Linux Mint Debian Edition (LMDE)."
+      if grep -qE 'LMDE|^ID=debian' /etc/os-release; then
+          echo "This is Linux Mint Debian Edition (LMDE) or Debian."
           sudo apt-get install gnupg curl && curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor && echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list && sudo apt-get update && sudo apt-get install -y mongodb-org && sudo systemctl start mongod && sudo systemctl enable mongod
       elif grep -qi 'NAME="Linux Mint"' /etc/os-release; then
           echo "This is Linux Mint (Ubuntu-based)."
@@ -609,7 +619,33 @@ EOF
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    11)
+    12)
+      echo "// ===== Install DDev ===== //"
+      # Ensure sudo credentials are cached for copy/paste of this block
+      sudo true
+
+      # Add DDEV’s GPG key to your keyring
+      sudo apt-get update && sudo apt-get install -y curl mkcert
+      sudo install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://pkg.ddev.com/apt/gpg.key | sudo tee /etc/apt/keyrings/ddev.asc > /dev/null
+      sudo chmod a+r /etc/apt/keyrings/ddev.asc
+
+      # Remove old repository files if present
+      sudo rm -f /etc/apt/keyrings/ddev.gpg /etc/apt/sources.list.d/ddev.list
+
+      # Add DDEV releases to your package repository
+      printf "Types: deb\nURIs: https://pkg.ddev.com/apt/\nSuites: *\nComponents: *\nSigned-By: /etc/apt/keyrings/ddev.asc\n" | sudo tee /etc/apt/sources.list.d/ddev.sources >/dev/null
+
+      # Update package information and install DDEV
+      sudo apt-get update && sudo apt-get install -y ddev
+
+      # One-time initialization of mkcert
+      mkcert -install
+      
+      # Confirm Exit
+      confirmFunc appInstaller
+      ;;
+    13)
       echo "// ===== Install Brave Browser ===== //"
       # sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && sudo apt update && sudo apt install brave-browser
       # curl -fsS https://dl.brave.com/install.sh | sh
@@ -618,7 +654,7 @@ EOF
       # Confirm Exit
       confirmFunc appInstaller
       ;;
-    12)
+    14)
       # Checking for Flatpak
       if ! command -v flatpak &> /dev/null; then
         echo "Please install flatpak first!";
