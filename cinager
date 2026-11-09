@@ -211,7 +211,7 @@ function extraConfig() {
         return
       fi
 
-      npm install -g @electron/asar create-next-app create-vite eslint live-server http-server nodemon npm pnpm prettier sass typescript uglify-js
+      npm install -g @electron/asar @opencode/cli create-next-app create-vite eslint live-server http-server nodemon npm pnpm prettier sass typescript uglify-js
       mkdir -p ~/.pnpm-store && pnpm setup;
       pnpm config set store-dir ~/.pnpm-store
       printf "\n ***** NPM global packages installed ***** \n"
